@@ -1,0 +1,8 @@
+Choice(1=Hard)   ChoiceRT   RecordedPresses    RequiredPresses  Completed(1=Yes)  WinLose    RM$Hard   Probability     CompletionTime  ButtonPressRate
+0	1.8824	30	30	1	w	1.78	0.5	5.2632	5.7
+1	1.4813	98	98	1	l	2.68	0.12	15.7917	6.2058
+0	1.6559	30	30	1	l	3.58	0.5	4.7145	6.3634
+0	1.8252	30	30	1	w	4.12	0.88	4.8317	6.209
+0	0.59414	30	30	1	l	3.04	0.12	6.3031	4.7596
+0	2.4613	30	30	1	l	1.42	0.5	5.2324	5.7335
+1	0.26602	27	98	0	l	2.86	0.5	21.0075	1.2853

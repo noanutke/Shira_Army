@@ -1,0 +1,432 @@
+# PCL program
+
+###################################################
+######        DEFINITION VON VARIABLEN       ######
+###################################################
+
+bool trackeyes = false;
+
+preset string vp = "vp-code";# siehe oben 
+preset string sequence_type = "A,B"; #Sequenz eingeben
+preset int vormessung = 1; # Durchgang ### einstellen
+
+logfile.set_filename ( vp + sequence_type + string(vormessung) + "_startleNFB_" +".log" ); ### bitte einstellen
+
+int time = 1000;
+int code_reg = 1;
+
+
+#int response_counter = 0;
+
+#int port_code_reg = 25;
+#int port_code_view = 35;
+#int port_code_neutral = 45;
+int port_code_startle = 25;
+int port_code_nostartle = 35;
+
+# Durations muessen im SCE und PCL gleich definiert sein!
+int blank_duration = 5000; # + jitter (2-3 s)
+int rating_duration = 5000;
+
+# Habituation
+int n_habtrials=10;
+array <int> iti_habituation[n_habtrials];
+iti_habituation={18000,20000,17000,25000,22000,19000,20000,21000,24000,20000}; #duration in ms 
+
+# Output files
+output_file outfile_valence = new output_file;
+output_file outfile_arousal = new output_file;
+outfile_valence.open("SAM\\SAM_valence_"+vp+"_"+string(vormessung)+".txt"); ## bitte einstellen
+outfile_arousal.open("SAM\\SAM_arousal_"+vp+"_"+string(vormessung)+".txt"); ## bitte einstellen
+
+
+
+array <int> valence[15][12] = { {99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99} };
+array <int> arousal[15][12] = { {99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99},{99,99,99,99,99,99,99,99,99,99,99,99} };
+
+array <int> cond_counter[15] = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}; # insg. 3 conditions (cond 1 = 5; cond3 = 15)
+
+array <int> sequence[5][36]; 
+
+####################################################################################################
+# Subroutine Diss-Rating  ##########################################################################
+####################################################################################################
+int dissoziiert_1;
+int dissoziiert_2;
+int dissoziiert_3;
+int dissoziiert_4;
+int spannung;
+int reg_erfolg;
+
+sub int dissorating_sub (bitmap dimension_bm)  begin
+	int exit_response = 0;
+	int value = 0;
+	scale_default.set_part(1,dimension_bm);
+	loop  until exit_response>0 begin
+		bitmap flip_pic=scale[value+1];
+		scale_default.set_part(2,flip_pic);
+		dissorating_trial.present();
+		if response_manager.last_response() == 1 && value>0 then 
+			value=value-1;
+		elseif response_manager.last_response() == 3 && value<9 then 
+			value=value+1;
+		elseif response_manager.last_response() == 2 then
+			exit_response=1;
+		end;
+	end;
+	return value;
+end;
+
+###############################################################
+###############################################################
+
+###################################################
+######            SAM RATING SUBROUTINE      ######
+###################################################
+
+sub int rating_sub (bitmap dimension) begin
+	int end_time = clock.time()+rating_duration;
+	rating_sam.set_part(1,dimension);
+	array <int> rating_val[9]= {1,2,3,4,5,6,7,8,9};
+	rating_val.shuffle(1,9);
+	int value = rating_val[1];
+	loop  until clock.time()>=end_time begin
+		bitmap rating_bmp=rating[value];
+		rating_sam.set_part(2,rating_bmp);
+		rating_trial.set_duration(end_time-clock.time());
+		rating_trial.present();
+		rating_event.set_event_code("refresh_scale");
+		if response_manager.last_response() == 1 && value>1 then 
+			value=value-1;
+		elseif response_manager.last_response() == 3 && value<9 then 
+			value=value+1;
+		end;
+	end;	
+	return value;
+end;
+
+################################
+
+
+######Beginn Experiment######
+
+### Antseuerung des Dissoziationsratings####
+
+dissoinstruction_trial.present();
+
+dissoziiert_1 = dissorating_sub(dissoziation_depersonalisation_bm);
+dissoziiert_2 = dissorating_sub(dissoziation_derealisation_bm);
+dissoziiert_3 = dissorating_sub(dissoziation_hoeren_bm);
+dissoziiert_4 = dissorating_sub(dissoziation_analgesie_bm);
+spannung = dissorating_sub(entspannt_bm);
+
+output_file outfile_sub = new output_file;
+outfile_sub.open_append("DissoRating\\Dissorating_"+ vp + string(vormessung)+".txt"); 
+outfile_sub.print(string(dissoziiert_1)+"\t"+string(dissoziiert_2)+"\t"+string(dissoziiert_3)+"\t"+string(dissoziiert_4)+"\t"+string(spannung)+"\n");
+	
+###################################################
+######        ANSTEUERUNG EYE-TRACKER        ######
+###################################################
+
+
+###################################################################
+#	choose Calibration method, auto accept, and calibration speed	
+
+
+# Calibration method 
+
+double calibration_method = 5.0;
+
+
+# Calibration auto accept
+
+double calibration_auto_accept = 1.0; # 0.0 bedeutet Manuell akzeptieren, 1.0 ist automatisch, aber erster Punkt mit Space bestaegen
+
+# Calibration speed
+double calibration_speed = 0.0;
+
+
+
+###########################################
+#	choose connection settings to 			
+#	establish communication with iView X	
+
+
+# connection settings
+string iViewX_IP = "10.0.12.37";
+string Local_IP = "10.0.12.27";
+int Send_Port = 4444;
+int Recv_Port = 5555;
+
+
+#######################################################
+#	definition of iView X API functions 					
+#	do not change the instance definitions;				
+#	for more information check the iView X SDK Manual	
+
+
+resp definition (accepts mouseclick)
+sub bool resp (int button, int current_count)
+begin
+	if response_manager.total_response_count(button) > current_count then
+		return true
+	end;
+	return false;
+end;
+
+
+# create PCL instance 
+iViewXAPI::eye_tracker2 tracker2 = new iViewXAPI::eye_tracker2( "{B7A4A7F7-7879-4C95-A3BA-6CCB355AECF6}" );
+int ret = tracker2.connect(iViewX_IP, Send_Port, Local_IP, Recv_Port);
+if ret == 1 then
+
+	# create eye_tracker instance 
+	eye_tracker tracker = new eye_tracker( "{FDC35980-7480-4761-859F-4DCCFA93BA57}" );
+	tracker.start_tracking();
+
+
+
+#############################################################
+#	calibrate, validate eye tracker and start receiving data	
+
+
+	# start calibration 
+	tracker.calibrate( et_calibrate_default, calibration_method, calibration_auto_accept, calibration_speed);
+	wait_interval (500);
+
+	# start validation 
+	tracker.calibrate(2, calibration_method, calibration_auto_accept, calibration_speed);
+
+	# get accuracy measurement 
+	double accuracy_x, accuracy_y;
+	accuracy_x = tracker2.get_accuracy_x();
+	accuracy_y = tracker2.get_accuracy_y();
+
+	term.print("Accuracy: x = "+string(accuracy_x)+", y = "+string(accuracy_y));
+	logfile.add_event_entry("Accuracy x "+string(accuracy_x)+" y "+string(accuracy_y));
+	
+	wait_interval (1000);
+	tracker.set_recording (true);  
+
+	# condition codes 
+	# reg startle = 5
+	# view startle = 10
+	# neutral startle = 15
+
+
+	###################################################
+	######             STIMULUS ARRAYS           ######
+	###################################################
+
+	#die erste Zeile der sequence-arrays gibt die Condition an, die zweite ob startle probe ja nein, die dritte die picture nr., die vierte den Jitter der Startle Probe, und die fünfte den ITI jitter
+	# sequence a bis d
+	
+	array <int> sequence_A[5][36] = {
+		{ 10 , 5 , 15 , 5 , 10 , 15 , 10 , 5 , 15 , 10 , 5 , 15 , 5 , 10 , 15 , 5 , 10 , 15 , 15 , 5 , 10 , 15 , 10 , 5 , 15 , 10 , 5 , 15 , 5 , 10 , 15 , 5 , 10 , 15 , 10 , 5 },
+		{ 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 0 , 1 , 1 },
+		{ 4 , 20 , 32 , 12 , 3 , 36 , 23 , 21 , 34 , 2 , 18 , 30 , 22 , 13 , 27 , 14 , 8 , 29 , 28 , 19 , 11 , 26 , 9 , 10 , 35 , 6 , 15 , 25 , 17 , 16 , 33 , 7 , 1 , 31 , 5 , 24 },
+		{ 2750 , 2750 , 500 , 0 , 500 , 2750 , 1250 , 3500 , 1250 , 0 , 1250 , 2000 , 2000 , 3500 , 3500 , 500 , 2000 , 0 , 500 , 3500 , 500 , 3500 , 1250 , 2000 , 2750 , 0 , 500 , 2000 , 0 , 3500 , 1250 , 1250 , 2000 , 0 , 2750 , 2750 },
+		{ 2000 , 2400 , 2600 , 2100 , 2700 , 2400 , 2600 , 2300 , 2100 , 2300 , 2300 , 2900 , 2100 , 2400 , 2400 , 2600 , 2300 , 2800 , 2900 , 2800 , 2100 , 3000 , 2400 , 2800 , 2300 , 2100 , 2500 , 2800 , 2500 , 2700 , 2100 , 2900 , 2300 , 2800 , 2600 , 2600 }
+	};
+	 
+	array <int> sequence_B[5][36] = {
+		{ 5 , 10 , 15 , 10 , 5 , 15 , 5 , 10 , 15 , 5 , 10 , 15 , 10 , 5 , 15 , 10 , 5 , 15 , 15 , 10 , 5 , 15 , 5 , 10 , 15 , 5 , 10 , 15 , 10 , 5 , 15 , 10 , 5 , 15 , 5 , 10 },
+		{ 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 , 1 , 1 , 0 , 1 , 1 , 1 , 1 , 0 , 1 , 1 },
+		{ 4 , 20 , 32 , 12 , 3 , 36 , 23 , 21 , 34 , 2 , 18 , 30 , 22 , 13 , 27 , 14 , 8 , 29 , 28 , 19 , 11 , 26 , 9 , 10 , 35 , 6 , 15 , 25 , 17 , 16 , 33 , 7 , 1 , 31 , 5 , 24 },
+		{ 2750 , 2750 , 500 , 0 , 500 , 2750 , 1250 , 3500 , 1250 , 0 , 1250 , 2000 , 2000 , 3500 , 3500 , 500 , 2000 , 0 , 500 , 3500 , 500 , 3500 , 1250 , 2000 , 2750 , 0 , 500 , 2000 , 0 , 3500 , 1250 , 1250 , 2000 , 0 , 2750 , 2750 },
+		{ 2000 , 2400 , 2600 , 2100 , 2700 , 2400 , 2600 , 2300 , 2100 , 2300 , 2300 , 2900 , 2100 , 2400 , 2400 , 2600 , 2300 , 2800 , 2900 , 2800 , 2100 , 3000 , 2400 , 2800 , 2300 , 2100 , 2500 , 2800 , 2500 , 2700 , 2100 , 2900 , 2300 , 2800 , 2600 , 2600 }
+	};
+	
+
+	if sequence_type=="A" then
+		sequence=sequence_A;
+	elseif sequence_type=="B" then
+		sequence=sequence_B;
+	end;
+	
+
+	
+	###################################################
+	######             START EXPERIMENT          ######
+	###################################################
+
+	tracker.send_command ("ET_INC");
+	
+	
+		
+	tracker.send_command ("ET_INC");
+	tracker.send_message ("instruction");
+
+	tracker.send_command ("ET_INC");
+	tracker.send_message ("habituation_instruction");
+
+	
+	hab_instruction_trial.present();
+	getprepared_instruction_trial.present();
+
+		loop int j = 1 until j > 10 begin
+			hab_startle_event.set_deltat(iti_habituation[j]);
+			startle.set_attenuation( 0.1111 ); # Achtung!!! bitte nicht verändern (104dB)
+			hab_startle_trial.present();
+			term.print("startle probe\n");
+			j=j+1;
+		end;
+	start_trial.present();
+	
+	
+	tracker.send_command ("ET_INC");
+	tracker.send_message ("getprepared_instruction");
+
+	loop int j = 1 until j > 36 begin  # run this loop 36 times	
+	
+
+
+		blank_trial.set_duration(blank_duration+sequence[5][j]);
+		
+		if sequence[1][j]==5 then
+			instr_event.set_event_code("regulate");
+			instruction_object.set_part(1,regulieren_inst);
+			#instr_event.set_port_code(port_code_reg);
+		elseif sequence[1][j]==10 then
+			instr_event.set_event_code("view");
+			instruction_object.set_part(1,betrachten_inst);
+			#instr_event.set_port_code(port_code_view);
+		elseif sequence[1][j]==15 then
+			instr_event.set_event_code("neutral");
+			instruction_object.set_part(1,betrachten_inst);
+			#instr_event.set_port_code(port_code_neutral);
+		end;
+	
+		
+		if sequence[1][j]==5 then
+			er_pic.set_part(1,pics[sequence[3][j]]); 
+			er_pic.set_part(2,small_arrows[1]);
+			er_pic.set_part(3,small_arrows[1]);
+		elseif sequence[1][j]==10 || sequence[1][j]==15 then
+			er_pic.set_part(1,pics[sequence[3][j]]); 
+			er_pic.set_part(2,small_arrows[2]);
+			er_pic.set_part(3,small_arrows[2]);
+			
+		end;
+		
+		# ER event
+		
+		if sequence[2][j]==1 then
+			er_event.set_event_code(string(sequence[3][j])); 
+			er_event.set_port_code(port_code_startle); # kodiert im Acq file ob startle ja oder nein
+		elseif sequence[2][j]==0 then
+			er_event.set_event_code(string(sequence[3][j])); 
+			er_event.set_port_code(port_code_nostartle); # kodiert im Acq file ob startle ja oder nein
+		end;
+
+		
+		# startle event
+		if sequence[2][j]==1 then
+			startle.set_attenuation( 0.1111 ); # Achtung! bitte nicht verändern!!!!!!
+		elseif sequence[2][j]==0 then
+			startle.set_attenuation( 1 ); # mute
+		end;
+		
+		er_startle_event.set_event_code(string(sequence[1][j])); 
+		er_startle_event.set_port_code(sequence[1][j]); # kodiert im Acq File die condition (trigger)
+		er_startle_event.set_deltat(6000+(sequence[4][j])); # startle probe nach 6,5 s plus max. 3 s
+	
+		blank_trial.present();
+		fixcross_trial.present();
+		
+		term.print("Trial Nr."+string(j)+"\tCondition "+string(sequence[1][j])+"\n");
+		
+		tracker.send_command ("ET_INC");
+		tracker.send_message ("condition"+string(sequence[1][j]));
+		
+		er_trial.present();
+	
+		tracker.send_command ("ET_INC");
+		tracker.send_message ("rating");
+		
+		rating_event.set_event_code("valence");
+		valence[sequence[1][j]/5][cond_counter[sequence[1][j]/5]] = rating_sub(sam_valence); # condition-code durch 5 teilen, damit Position im Outputfile richtig ist (5,10,15 --> 1,2,3)
+		blank_trial.set_duration(500);
+		blank_trial.present();
+		rating_event.set_event_code("arousal");
+		arousal[sequence[1][j]/5][cond_counter[sequence[1][j]/5]] = rating_sub(sam_arousal); # condition-code durch 5 teilen, damit Position im Outputfile richtig ist (5,10,15 --> 1,2,3)
+		
+		cond_counter[sequence[1][j]/5] = cond_counter[sequence[1][j]/5] + 1;
+		j = j+1;
+		
+	end;
+	
+
+
+	###################################################
+	######             WRITE OUTPUTS             ######
+	###################################################
+
+	loop int j = 1 until j > 15 begin # 3
+		if j >1 then 
+			outfile_valence.print("\n");
+			outfile_arousal.print("\n");
+		end;
+		loop int i = 1 until i > 12 begin
+			outfile_valence.print(string(valence[j][i])+"\t");
+			outfile_arousal.print(string(arousal[j][i])+"\t");
+			i=i+1;
+		end;
+		j=j+1;	
+	end;
+	
+	
+### Antseuerung des Dissoziationsratings######	
+dissoinstructionpost_trial.present();
+
+dissoziiert_1 = dissorating_sub(dissoziation_depersonalisation_bm);
+dissoziiert_2 = dissorating_sub(dissoziation_derealisation_bm);
+dissoziiert_3 = dissorating_sub(dissoziation_hoeren_bm);
+dissoziiert_4 = dissorating_sub(dissoziation_analgesie_bm);
+spannung = dissorating_sub(entspannt_bm);
+
+outfile_sub.print(string(dissoziiert_1)+"\t"+string(dissoziiert_2)+"\t"+string(dissoziiert_3)+"\t"+string(dissoziiert_4)+"\t"+string(spannung));
+
+trial_ende.present();
+	
+##########################################################
+#	stop eyetracker													#
+
+
+	tracker.set_recording (false);             
+	tracker.stop_tracking();
+
+
+##########################################################
+#	save data, use subject prompt for generating filename	
+
+
+	
+	# klips: logfile speichern
+									
+	string res_1360 = "C:\\Presentation\\logfiles eyetracker\\";										
+	string idf = vp + string(vormessung) +".idf\" \"my description\" \"my user\" \"OVR\""; #wenn das nicht funktioniert, dann die naechste Zeile uncomment #### bitte einstellen!
+	string sav_res1360 = "ET_SAV \"" + res_1360 + idf;	
+	tracker.send_command( sav_res1360 );	
+	
+	# disconnect from eyetracker
+	tracker2.disconnect();
+
+else
+
+	#connection could not be established 
+	connect_error.present();
+	
+	loop
+	int m_responses = response_manager.total_response_count(1);
+	until false
+	begin
+		# end presentation if button was pressed 
+		if resp(1, m_responses) then
+			break;
+		end;
+	end;
+	
+end;
+
+
