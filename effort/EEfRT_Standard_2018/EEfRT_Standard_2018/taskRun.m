@@ -19,9 +19,9 @@ if dexterity == 'r'
     HARD  = KbName('s');
     EASY = KbName('l');
 elseif dexterity == 'l'
-    HARD  = KbName('l');
+    HARD  = KbName('k');
     EASY = KbName('s');
-    showKey = 'l';
+    showKey = 'k';
 end
 
 
@@ -33,12 +33,12 @@ if (difficulty == 'h')
         showKey = 's';
     else
         requiredKeyPosition = HARD;
-        showKey = 'l';
+        showKey = 'k';
     end
 else
     if dexterity == 'r'
         requiredKeyPosition = EASY;
-        showKey = 'l';
+        showKey = 'k';
     else
         requiredKeyPosition = EASY;
         showKey = 's';
@@ -79,9 +79,11 @@ while (currentTime < startTime+timeDelta) && (goalReachedCount < numberOfPresses
     currentTime = GetSecs;
     Screen('DrawText', window, uint8(timeLeft), ceil(resX/2)+100, ceil(resY/2)-300, 255); %Show remaining time
     Screen('DrawText', window, num2str((startTime+timeDelta)-currentTime), ceil(resX/2), ceil(resY/2)-300, 255); %Show remaining time
-    Screen('DrawText', window, uint8(push),ceil(resX/2)-180, ceil(resY/2)+300, 255); %Show reminder.
-    Screen('DrawText', window, showKey,ceil(resX/2)-190, ceil(resY/2)+300, 255); %Show reminder.
-    Screen('DrawText', window, uint8(untilBarFull),ceil(resX/2)-360, ceil(resY/2)+300, 255); %Show reminder.
+    if showKey == 'k' 
+        Screen('DrawText', window, uint8(pressLamed),ceil(resX/2)-180, ceil(resY/2)+300, 255); %Show reminder.
+    else
+        Screen('DrawText', window, uint8(pressDaled),ceil(resX/2)-180, ceil(resY/2)+300, 255); %Show reminder.
+    end
 
     Screen(window,'PutImage',progressBarMatrix); %Display to window pointer
     Screen(window, 'Flip'); %Write framebuffer to display

@@ -7,7 +7,7 @@
 % clean up
 clear all
 fclose('all'); 
-sca 
+
 clc
 
 % PTB basics

@@ -28,12 +28,12 @@ KbName('UnifyKeyNames');
 
 if dexterity == 'r'  
     HARD  = KbName('s');
-    EASY = KbName('l');
+    EASY = KbName('k');
     showKey = 's';
 elseif dexterity == 'l'
-    HARD  = KbName('l');
+    HARD  = KbName('k');
     EASY = KbName('s');
-    showKey = 'l';
+    showKey = 'k';
 end
 
 load('hebrewStrings');
