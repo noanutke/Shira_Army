@@ -36,18 +36,28 @@ elseif dexterity == 'l'
     showKey = 'l';
 end
 
-
+load('hebrewStrings');
 if dexterity == 'r' 
     Screen(window,'Flip');
-    Screen('DrawText', window, strcat('The Easy Task is worth: $', num2str(rewardSmall)),350,200); 
-    Screen('DrawText', window, strcat('The Hard task is worth: $', num2str(rewardLarge)),350,300);
-    Screen('DrawText', window, strcat('The Probability of winning is:', Prob),350,400);
+    Screen('DrawText', window, uint8(easyTask),350,200);
+    Screen('DrawText', window, num2str(rewardSmall),350,230); 
+    
+    Screen('DrawText', window,uint8(hardTask),350,300);
+    Screen('DrawText', window, num2str(rewardLarge),350,330);
+    
+    Screen('DrawText', window, uint8(probability),350,400);
+    Screen('DrawText', window, Prob,350,430);
     Screen(window,'Flip');
 else
     Screen(window,'Flip');
-    Screen('DrawText', window, strcat('The Easy Task is worth: $', num2str(rewardSmall)),350,200);
-    Screen('DrawText', window, strcat('The Hard task is worth: $', num2str(rewardLarge)),350,300); 
-    Screen('DrawText', window, strcat('The Probability of winning: is', Prob),350,400);
+    Screen('DrawText', window, uint8(easyTask),350,200);
+    Screen('DrawText', window, num2str(rewardSmall),350,230);
+    
+    Screen('DrawText', window, uint8(hardTask),350,300);
+    Screen('DrawText', window, num2str(rewardLarge),350,330); 
+    
+    Screen('DrawText', window,  uint8(probability),350,400);
+    Screen('DrawText', window, Prob ,350,430);
     Screen(window,'Flip');
 end
 reactionTime = 0;

@@ -1,5 +1,7 @@
 function resultLog = taskMain(window, numberOfRuns, cueCard, winSelect, rewardSmall, rewardLarge, ... 
     dexterity, resX, resY, resultLogCount, resultLog, maxTime,pracTrial,subjectID,sessionID)
+
+load('hebrewStrings');
 if pracTrial == 'y'
     i = 1;
 else
@@ -7,7 +9,10 @@ else
 end
 currentTime = 0;
 tic;
+numberOfRuns=15;
 while i<numberOfRuns && currentTime<maxTime %For the size of the number of cue cards...
+        rewardSmallHundreds = rewardSmall * 100;
+        rewardLargeHunderds = rewardLarge(i) * 100;
         if cueCard(i) ~= '0' %If a break is not signified, run the task.
         calibrationImage = imread('STIM/fixation.bmp','bmp');
         Screen(window,'FillRect',0);
@@ -22,9 +27,9 @@ while i<numberOfRuns && currentTime<maxTime %For the size of the number of cue c
         
         %Write win/lose to log structure...
         resultLog(6,resultLogCount) = winSelect(i);
-        resultLog(7,resultLogCount) = rewardLarge(i);
+        resultLog(7,resultLogCount) = rewardLargeHunderds;
         
-        [selection yes reactionTime] = taskSelect(window, dexterity, rewardLarge(i), cueCard(i), winSelect(i), rewardSmall);%Cue card selection; Determines here if reward will be given or not.
+        [selection yes reactionTime] = taskSelect(window, dexterity, rewardLargeHunderds, cueCard(i), winSelect(i), rewardSmallHundreds);%Cue card selection; Determines here if reward will be given or not.
         
         %Prompt for READY
         Screen(window,'FillRect',0);
@@ -85,30 +90,32 @@ while i<numberOfRuns && currentTime<maxTime %For the size of the number of cue c
         if completionStatus == 1
             Screen(window,'FillRect',0);
             Screen(window, 'Flip');
-            Screen(window, 'DrawText', 'You completed the task!', ceil(resX/2)-60, ceil(resY/2), 255);
+            Screen(window, 'DrawText', uint8(youCompletedTask), ceil(resX/2)-60, ceil(resY/2), 255);
             Screen(window, 'Flip');
             pause(1.0);
+
             if selection == 'e'
-                displayAmount = num2str(rewardSmall * yes); %multiply winnings times win/lose
+                displayAmount = num2str(rewardSmallHundreds * yes); %multiply winnings times win/lose
                 t = num2str(3 * yes);
             else
-                displayAmount = num2str(rewardLarge(i)*yes);%multiply winnings by win/lose
+                displayAmount = num2str(rewardLargeHunderds*yes);%multiply winnings by win/lose
                 t = num2str(7 * yes);
             end
             Screen(window,'FillRect',0);
             Screen(window, 'Flip');
                     
             if t ~= '0'
-                Screen(window, 'DrawText', strcat('You won: $',displayAmount), ceil(resX/2)-60, ceil(resY/2)+40, 255);
+                Screen(window, 'DrawText', uint8(youWon), ceil(resX/2)-60, ceil(resY/2)+40, 255);
+                Screen(window, 'DrawText', displayAmount, ceil(resX/2)-60, ceil(resY/2)+90, 255);
             else
-                Screen(window, 'DrawText', 'No money this trial.', ceil(resX/2)-60, ceil(resY/2)+40, 255);
+                Screen(window, 'DrawText', uint8(noMoney), ceil(resX/2)-60, ceil(resY/2)+40, 255);
             end
             Screen(window, 'Flip');
             pause(2.0);
         else
             Screen(window,'FillRect',0);
             Screen(window, 'Flip');
-            Screen(window, 'DrawText', 'You failed to complete the task.', ceil(resX/2)-60, ceil(resY/2), 255);
+            Screen(window, 'DrawText', uint8(youFailed), ceil(resX/2)-60, ceil(resY/2), 255);
             Screen(window, 'Flip');
             pause(2.0);
         end
@@ -118,7 +125,7 @@ while i<numberOfRuns && currentTime<maxTime %For the size of the number of cue c
         Screen(window, 'Flip');
         if i == 1
             Screen(window, 'Flip');
-            Screen(window, 'DrawText', 'Loading Task...', ceil(resX/2)-60, ceil(resY/2), 255);
+            Screen(window, 'DrawText', uint8(loadingTask), ceil(resX/2)-60, ceil(resY/2), 255);
             Screen(window, 'Flip');
             currentTime = 0;
             tic;

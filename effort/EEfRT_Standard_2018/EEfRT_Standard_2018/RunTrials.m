@@ -7,7 +7,7 @@
 % clean up
 clear all
 fclose('all'); 
-sca
+sca 
 clc
 
 % PTB basics
@@ -37,6 +37,7 @@ White = [255 255 255];
 %Create background rectangle
 background = zeros(1000, 700, 3);
 
+load('hebrewStrings');
 %Create a structure for holding experimental results.
 resultLog = zeros(10,1); 
 resultLogCount = 1; %Maintains the count to index the result log.
@@ -44,7 +45,7 @@ resultLogCount = 1; %Maintains the count to index the result log.
 rewardSmall = 1.00; 
 
 %Optional code to remove sync tests. Generally not recommended. 
-%Screen('Preference','SkipSynctests',1); 
+Screen('Preference','SkipSynctests',1); 
 
 %Specify the window pointer
 whichScreen = 0;
@@ -52,6 +53,8 @@ window = Screen(whichScreen, 'OpenWindow');
 
 %set fonts
 oldTextSize = Screen('TextSize', window, 24);
+
+oldone = Screen('Preference', 'TextEncodingLocale', 'UTF-8');
 
 if pracTrial == 'y'
     for instruct = 1:10 
@@ -68,7 +71,7 @@ if pracTrial == 'y'
     end
     Screen('FillRect',window,Black);
     Screen('Flip',window);   
-    DrawFormattedText(window,'Wait for the experimenter.','center','center',255);
+    DrawFormattedText(window, waitForGuide,'center','center',255);
     Screen('Flip',window);
     KbWait(-3);
     
@@ -76,8 +79,9 @@ if pracTrial == 'y'
 else
     % makes sure the subject is ready
     Screen('FillRect',window,Black);
-    Screen('Flip',window);   
-    DrawFormattedText(window,'Press any button when ready to begin.','center','center',255);
+    Screen('Flip',window);
+    
+    DrawFormattedText(window,uint8(pressToContinue),'center','center',255);
     Screen('Flip',window);
     KbWait(-3);
 end
@@ -92,7 +96,7 @@ numberOfRuns = numberOfRuns(1);
 
 
 % waits for a second 
-DrawFormattedText(window,'The task will begin momentarily.','center','center',255);
+DrawFormattedText(window,uint8(taskWillStartSoon),'center','center',255);
 Screen('Flip',window);
 WaitSecs(1);
 
@@ -114,7 +118,7 @@ xlswrite(fileNameEarnings,earnings);
 cd ../
 Screen(window,'FillRect',0);
 Screen(window, 'Flip');
-Screen('DrawText', window, 'Task complete. Please get the experimenter.', floor(resX/2)-70,floor(resY/2)+100, 255);
+Screen('DrawText', window, uint8(endOfTask), floor(resX/2)-70,floor(resY/2)+100, 255);
 Screen(window, 'Flip');
 pause(1)
 KbWait;

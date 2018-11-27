@@ -1,5 +1,5 @@
 function [completionStatus numberOfPresses goalReachedCount completionTime] = taskRun(window, dexterity, difficulty, resX, resY)
-
+load('hebrewStrings')
 % Setup progress bar
 progressBarMatrix = ones(400,100);
 progressBarMatrix = progressBarMatrix*256;
@@ -77,8 +77,11 @@ while (currentTime < startTime+timeDelta) && (goalReachedCount < numberOfPresses
         acceptingInput=0;
     end
     currentTime = GetSecs;
-    Screen('DrawText', window, strcat('Time left:',num2str((startTime+timeDelta)-currentTime)), ceil(resX/2)+100, ceil(resY/2)-300, 255); %Show remaining time
-    Screen('DrawText', window, strcat('Push: ',showKey,' until bar is full.'),ceil(resX/2)-180, ceil(resY/2)+300, 255); %Show reminder.
+    Screen('DrawText', window, uint8(timeLeft), ceil(resX/2)+100, ceil(resY/2)-300, 255); %Show remaining time
+    Screen('DrawText', window, num2str((startTime+timeDelta)-currentTime), ceil(resX/2), ceil(resY/2)-300, 255); %Show remaining time
+    Screen('DrawText', window, uint8(push),ceil(resX/2)-180, ceil(resY/2)+300, 255); %Show reminder.
+    Screen('DrawText', window, showKey,ceil(resX/2)-190, ceil(resY/2)+300, 255); %Show reminder.
+    Screen('DrawText', window, uint8(untilBarFull),ceil(resX/2)-360, ceil(resY/2)+300, 255); %Show reminder.
 
     Screen(window,'PutImage',progressBarMatrix); %Display to window pointer
     Screen(window, 'Flip'); %Write framebuffer to display
@@ -91,10 +94,10 @@ end
 completionTime = currentTime - startTime;
 
 if goalReachedCount == numberOfPresses
-    disp('The task was completed successfully');
+    disp(uint8(taskCompletedSuccessfuly));
     completionStatus = 1;
 else
-    disp('Task timed out before required number of presses was completed.');
+    disp(uint8(timeOut));
     completionStatus = 0;
 end
 clc
