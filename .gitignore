@@ -1,1 +1,10 @@
-tools/
+*
+# But not these files...
+!.gitignore
+!*.py
+
+
+# ...even if they are in subdirectories
+!*/
+
+*/venv/
