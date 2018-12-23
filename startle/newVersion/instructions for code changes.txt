@@ -1,0 +1,90 @@
+1. replace the rating scales definitions with:
+
+	valenceRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1, high=5,
+                            precision=1, showValue=False, markerExpansion=0, scale=u'',  markerStart=u'3',
+                            tickHeight=u'0', showAccept=False, lineColor='Black',textSize=0.0, leftKeys='left',
+                            rightKeys='right')
+valenceRatingImage = visual.ImageStim(
+    win=win, name='valenceRatingImage',
+    image=u'rating\\ratingValence.png', mask=None,
+    ori=0, pos=(0, -0.28), size=(0.98, 0.5),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-1.0)
+
+
+arousalRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1, high=5,
+                            precision=1, showValue=False, markerExpansion=0, scale=u'',  markerStart=u'3',
+                            tickHeight=u'0', showAccept=False, lineColor='Black',textSize=0.0, leftKeys='left',
+                            rightKeys='right')
+arousalRatingImage = visual.ImageStim(
+    win=win, name='arousalRatingImage',
+    image=u'rating\\ratingArousal.png', mask=None,
+    ori=0, pos=(0, -0.28), size=(0.98, 0.5),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-1.0)
+	
+	
+2. 
+
+expInfo = {'participant': '', 'session': '001', 'order': '', 'withRating': ''}
+dlg = gui.DlgFromDict(dictionary=expInfo, title=expName)
+if dlg.OK == False:
+    core.quit()  # user pressed cancel
+expInfo['date'] = data.getDateStr()  # add a simple timestamp
+expInfo['expName'] = expName
+
+# Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
+filename = _thisDir + os.sep + u'data/%s_%s_%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'],expInfo['order'],
+                                                         expInfo['withRating'])
+
+3. look for: trialsLoop = 
+
+paste instead:
+
+trialsList = "";
+if expInfo['order'] == '1':
+    trialsList = u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\trials1.xlsx'
+else:
+    trialsList = u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\trials2.xlsx'
+
+# set up handler to look after randomisation of conditions etc
+trialsLoop = data.TrialHandler(nReps=1, method='sequential',
+                               extraInfo=expInfo, originPath=-1,
+                               trialList=data.importConditions(
+                                   trialsList),
+                               seed=None, name='trialsLoop') 
+
+
+							   
+4. look for: # ------Prepare to start Routine "ratingRoutineValence"-------
+paste below:
+
+    if expInfo['withRating'] == 'no':
+        continue;
+		
+5.  c c c 
+    rate = arousalRating.getHistory()[len(arousalRating.getHistory()) - 1][0]
+    rt = arousalRating.getHistory()[len(arousalRating.getHistory()) - 1][1]
+    trialsLoop.addData('arousalRating.response', arousalRating.getRating())
+    trialsLoop.addData('arousalRating.rt', arousalRating.getRT())
+    trialsLoop.addData('arousalRating.history', arousalRating.getHistory())
+	
+6.
+    rate = valenceRating.getHistory()[len(valenceRating.getHistory()) - 1][0]
+    rt = valenceRating.getHistory()[len(valenceRating.getHistory()) - 1][1]
+    trialsLoop.addData('valenceRating.response', valenceRating.getRating())
+    trialsLoop.addData('valenceRating.rt', valenceRating.getRT())
+    trialsLoop.addData('valenceRating.history', valenceRating.getHistory())
+					
+
+7. look for the last appearance of: probeTest.play() 
+
+paste below:
+time=datetime.now();
+trialsLoop.addData('probeTimeSeconds', time);
+trialsLoop.addData('probeTimeMicroSeconds', time.microsecond);	
+
+8. add to imports:
+from datetime import datetime	

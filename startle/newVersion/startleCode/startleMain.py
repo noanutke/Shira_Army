@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 This experiment was created using PsychoPy2 Experiment Builder (v1.85.4),
-    on December 20, 2018, at 14:56
+    on December 23, 2018, at 14:51
 If you publish work using this script please cite the PsychoPy publications:
     Peirce, JW (2007) PsychoPy - Psychophysics software in Python.
         Journal of Neuroscience Methods, 162(1-2), 8-13.
@@ -20,7 +20,7 @@ from numpy import (sin, cos, tan, log, log10, pi, average,
 from numpy.random import random, randint, normal, shuffle
 import os  # handy system and path functions
 import sys  # to get file system encoding
-
+from datetime import datetime
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__)).decode(sys.getfilesystemencoding())
 os.chdir(_thisDir)
@@ -37,6 +37,7 @@ expInfo['expName'] = expName
 # Data file name stem = absolute path + name; later add .psyexp, .csv, .log, etc
 filename = _thisDir + os.sep + u'data/%s_%s_%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'],expInfo['order'],
                                                          expInfo['withRating'])
+trialsLoop = "";
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -69,7 +70,7 @@ else:
 instructionsGeneral1Clock = core.Clock()
 imageInstructions1 = visual.ImageStim(
     win=win, name='imageInstructions1',
-    image=u'instructions\\instruction1.png', mask=None,
+    image='instructions\\instruction1.png', mask=None,
     ori=0, pos=(0, 0), size=(2, 2),
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
@@ -79,7 +80,7 @@ imageInstructions1 = visual.ImageStim(
 instructionsGeneral2Clock = core.Clock()
 imageInstructions2 = visual.ImageStim(
     win=win, name='imageInstructions2',
-    image=u'instructions\\instruction2.png', mask=None,
+    image='instructions\\instruction2.png', mask=None,
     ori=0, pos=(0, 0), size=(2, 2),
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
@@ -89,49 +90,7 @@ imageInstructions2 = visual.ImageStim(
 instructionsGeneral3Clock = core.Clock()
 imageInstructions3 = visual.ImageStim(
     win=win, name='imageInstructions3',
-    image=u'instructions\\instruction3.png', mask=None,
-    ori=0, pos=(0, 0), size=(2, 2),
-    color=[1, 1, 1], colorSpace='rgb', opacity=1,
-    flipHoriz=False, flipVert=False,
-    texRes=128, interpolate=True, depth=0.0)
-
-# Initialize components for Routine "instructionsHabituationRoutine"
-instructionsHabituationRoutineClock = core.Clock()
-imageInstructionsHabituation = visual.ImageStim(
-    win=win, name='imageInstructionsHabituation',
-    image=u'instructions\\instruction_hab.png', mask=None,
-    ori=0, pos=(0, 0), size=(2, 2),
-    color=[1, 1, 1], colorSpace='rgb', opacity=1,
-    flipHoriz=False, flipVert=False,
-    texRes=128, interpolate=True, depth=0.0)
-
-# Initialize components for Routine "getPreparedForHabituation"
-getPreparedForHabituationClock = core.Clock()
-imagePrepareForHab = visual.ImageStim(
-    win=win, name='imagePrepareForHab',
-    image=u'instructions/instruction_getprepared.png', mask=None,
-    ori=0, pos=(0, 0), size=(2, 2),
-    color=[1, 1, 1], colorSpace='rgb', opacity=1,
-    flipHoriz=False, flipVert=False,
-    texRes=128, interpolate=True, depth=0.0)
-
-# Initialize components for Routine "habituationTrial"
-habituationTrialClock = core.Clock()
-probeSoundHabituation = sound.Sound('C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\probe\\Startle_48kHz.wav',
-                                    secs=-1)
-probeSoundHabituation.setVolume(1)
-fixationHabituation = visual.TextStim(win=win, name='fixationHabituation',
-                                      text='+',
-                                      font='Arial',
-                                      pos=(0, 0), height=0.6, wrapWidth=None, ori=0,
-                                      color='white', colorSpace='rgb', opacity=1,
-                                      depth=-1.0);
-
-# Initialize components for Routine "taskStartsSoonRoutine"
-taskStartsSoonRoutineClock = core.Clock()
-taskStartsSoonImage = visual.ImageStim(
-    win=win, name='taskStartsSoonImage',
-    image=u'instructions\\instruction_begin.png', mask=None,
+    image='instructions\\instruction3.png', mask=None,
     ori=0, pos=(0, 0), size=(2, 2),
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
@@ -145,6 +104,16 @@ testFixationText = visual.TextStim(win=win, name='testFixationText',
                                    pos=(0, 0), height=0.6, wrapWidth=None, ori=0,
                                    color='white', colorSpace='rgb', opacity=1,
                                    depth=0.0);
+
+# Initialize components for Routine "trialInstructions"
+trialInstructionsClock = core.Clock()
+conditionInstructionImage = visual.ImageStim(
+    win=win, name='conditionInstructionImage',
+    image='sin', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
 
 # Initialize components for Routine "trialImageRoutine"
 trialImageRoutineClock = core.Clock()
@@ -174,33 +143,181 @@ cue_rightSide = visual.ImageStim(
 
 # Initialize components for Routine "ratingRoutineValence"
 ratingRoutineValenceClock = core.Clock()
-valenceRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1,
-                                   high=5,
-                                   precision=1, showValue=False, markerExpansion=0, scale=u'', markerStart=u'3',
-                                   tickHeight=u'0', showAccept=False, lineColor='Black', textSize=0.0, leftKeys='left',
-                                   rightKeys='right')
+valenceRating = visual.RatingScale(win=win, name='valenceRating', marker='triangle', size=1.0, pos=[0.0, -0.4], low=1,
+                                   high=9, labels=[''], scale='', showAccept=False)
 valenceRatingImage = visual.ImageStim(
     win=win, name='valenceRatingImage',
-    image=u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\rating\\Sam_valence.png', mask=None,
+    image=u'rating\\Sam_valence.png', mask=None,
+    ori=0, pos=(0, 0), size=(0.5, 0.5),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-1.0)
+imageValenceText = visual.ImageStim(
+    win=win, name='imageValenceText',
+    image=u'rating\\valenceText.png', mask=None,
+    ori=0, pos=(0, 0.5), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-2.0)
+
+# Initialize components for Routine "ratingRoutineArousal"
+ratingRoutineArousalClock = core.Clock()
+arousalRating = visual.RatingScale(win=win, name='arousalRating', marker='triangle', size=1.0, pos=[0.0, -0.4], low=1,
+                                   high=9, labels=[''], scale='')
+arousalRatingImage = visual.ImageStim(
+    win=win, name='arousalRatingImage',
+    image=u'rating\\Sam_arousal.png', mask=None,
+    ori=0, pos=(0, 0), size=(0.5, 0.5),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-1.0)
+imageArousalText = visual.ImageStim(
+    win=win, name='imageArousalText',
+    image=u'rating\\arousalText.png', mask=None,
+    ori=0, pos=(0, 0.5), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-2.0)
+
+# Initialize components for Routine "instructionsHabituationRoutine"
+instructionsHabituationRoutineClock = core.Clock()
+imageInstructionsHabituation = visual.ImageStim(
+    win=win, name='imageInstructionsHabituation',
+    image='instructions\\instruction_hab.png', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+
+# Initialize components for Routine "getPreparedForHabituation"
+getPreparedForHabituationClock = core.Clock()
+imagePrepareForHab = visual.ImageStim(
+    win=win, name='imagePrepareForHab',
+    image='instructions/instruction_getprepared.png', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+
+# Initialize components for Routine "habituationTrial"
+habituationTrialClock = core.Clock()
+probeSoundHabituation = sound.Sound(u'probe\\Startle_48kHz.wav', secs=-1)
+probeSoundHabituation.setVolume(1)
+fixationHabituation = visual.TextStim(win=win, name='fixationHabituation',
+                                      text='+',
+                                      font='Arial',
+                                      pos=(0, 0), height=0.6, wrapWidth=None, ori=0,
+                                      color='white', colorSpace='rgb', opacity=1,
+                                      depth=-1.0);
+
+# Initialize components for Routine "taskStartsSoonRoutine"
+taskStartsSoonRoutineClock = core.Clock()
+taskStartsSoonImage = visual.ImageStim(
+    win=win, name='taskStartsSoonImage',
+    image='instructions\\instruction_begin.png', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+
+# Initialize components for Routine "testFixation"
+testFixationClock = core.Clock()
+testFixationText = visual.TextStim(win=win, name='testFixationText',
+                                   text='+',
+                                   font='Arial',
+                                   pos=(0, 0), height=0.6, wrapWidth=None, ori=0,
+                                   color='white', colorSpace='rgb', opacity=1,
+                                   depth=0.0);
+
+# Initialize components for Routine "trialInstructions"
+trialInstructionsClock = core.Clock()
+conditionInstructionImage = visual.ImageStim(
+    win=win, name='conditionInstructionImage',
+    image='sin', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+
+# Initialize components for Routine "trialImageRoutine"
+trialImageRoutineClock = core.Clock()
+trialImage = visual.ImageStim(
+    win=win, name='trialImage',
+    image='sin', mask=None,
+    ori=0, pos=(0, 0), size=(1.5, 1.5),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
+probeTest = sound.Sound('A', secs=-1)
+probeTest.setVolume(1)
+cue_leftSide = visual.ImageStim(
+    win=win, name='cue_leftSide',
+    image='sin', mask=None,
+    ori=0, pos=(-0.87, 0), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-2.0)
+cue_rightSide = visual.ImageStim(
+    win=win, name='cue_rightSide',
+    image='sin', mask=None,
+    ori=0, pos=(0.87, 0), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-3.0)
+
+# Initialize components for Routine "ratingRoutineValence"
+ratingRoutineValenceClock = core.Clock()
+valenceRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1, high=5,
+                        precision=1, showValue=False, markerExpansion=0, scale=u'',  markerStart=u'3',
+                        tickHeight=u'0', showAccept=False, lineColor='Black',textSize=0.0, leftKeys='left',
+                        rightKeys='right')
+valenceRatingImage = visual.ImageStim(
+    win=win, name='valenceRatingImage',
+    image=u'rating\\Sam_valence.png', mask=None,
     ori=0, pos=(0, -0.28), size=(0.98, 0.5),
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
 
+imageValenceText = visual.ImageStim(
+    win=win, name='imageValenceText',
+    image=u'rating\\valenceText.png', mask=None,
+    ori=0, pos=(0, 0.5), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-2.0)
+
 # Initialize components for Routine "ratingRoutineArousal"
 ratingRoutineArousalClock = core.Clock()
-arousalRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1,
-                                   high=5,
-                                   precision=1, showValue=False, markerExpansion=0, scale=u'', markerStart=u'3',
-                                   tickHeight=u'0', showAccept=False, lineColor='Black', textSize=0.0, leftKeys='left',
-                                   rightKeys='right')
+
+arousalRating = visual.RatingScale(win=win, markerColor='white', name='rating', marker=u'triangle', size=1.30, pos=[0.01, -0.04], low=1, high=5,
+                            precision=1, showValue=False, markerExpansion=0, scale=u'',  markerStart=u'3',
+                            tickHeight=u'0', showAccept=False, lineColor='Black',textSize=0.0, leftKeys='left',
+                            rightKeys='right')
 arousalRatingImage = visual.ImageStim(
     win=win, name='arousalRatingImage',
-    image=u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\rating\\Sam_arousal.png', mask=None,
+    image=u'rating\\Sam_arousal.png', mask=None,
     ori=0, pos=(0, -0.28), size=(0.98, 0.5),
     color=[1, 1, 1], colorSpace='rgb', opacity=1,
     flipHoriz=False, flipVert=False,
     texRes=128, interpolate=True, depth=-1.0)
+imageArousalText = visual.ImageStim(
+    win=win, name='imageArousalText',
+    image=u'rating\\arousalText.png', mask=None,
+    ori=0, pos=(0, 0.5), size=None,
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=-2.0)
+
+# Initialize components for Routine "endExp"
+endExpClock = core.Clock()
+endImage = visual.ImageStim(
+    win=win, name='endImage',
+    image=u'instructions/finish.png', mask=None,
+    ori=0, pos=(0, 0), size=(2, 2),
+    color=[1, 1, 1], colorSpace='rgb', opacity=1,
+    flipHoriz=False, flipVert=False,
+    texRes=128, interpolate=True, depth=0.0)
 
 # Create some handy timers
 globalClock = core.Clock()  # to track the time since experiment started
@@ -443,6 +560,368 @@ thisExp.nextEntry()
 # the Routine "instructionsGeneral3" was not non-slip safe, so reset the non-slip timer
 routineTimer.reset()
 
+# set up handler to look after randomisation of conditions etc
+practiceTrials = data.TrialHandler(nReps=1, method='random',
+                                   extraInfo=expInfo, originPath=-1,
+                                   trialList=data.importConditions(u'practiceTrials.xlsx'),
+                                   seed=None, name='practiceTrials')
+thisExp.addLoop(practiceTrials)  # add the loop to the experiment
+thisPracticeTrial = practiceTrials.trialList[0]  # so we can initialise stimuli with some values
+# abbreviate parameter names if possible (e.g. rgb = thisPracticeTrial.rgb)
+if thisPracticeTrial != None:
+    for paramName in thisPracticeTrial.keys():
+        exec (paramName + '= thisPracticeTrial.' + paramName)
+
+for thisPracticeTrial in practiceTrials:
+    currentLoop = practiceTrials
+    # abbreviate parameter names if possible (e.g. rgb = thisPracticeTrial.rgb)
+    if thisPracticeTrial != None:
+        for paramName in thisPracticeTrial.keys():
+            exec (paramName + '= thisPracticeTrial.' + paramName)
+
+    # ------Prepare to start Routine "testFixation"-------
+    t = 0
+    testFixationClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    # update component parameters for each repeat
+    # keep track of which components have finished
+    testFixationComponents = [testFixationText]
+    for thisComponent in testFixationComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "testFixation"-------
+    while continueRoutine:
+        # get current time
+        t = testFixationClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+
+        # *testFixationText* updates
+        if t >= 0.0 and testFixationText.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            testFixationText.tStart = t
+            testFixationText.frameNStart = frameN  # exact frame index
+            testFixationText.setAutoDraw(True)
+        frameRemains = 0.0 + fixationLength - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if testFixationText.status == STARTED and t >= frameRemains:
+            testFixationText.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in testFixationComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "testFixation"-------
+    for thisComponent in testFixationComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # the Routine "testFixation" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+
+    # ------Prepare to start Routine "trialInstructions"-------
+    t = 0
+    trialInstructionsClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    routineTimer.add(2.000000)
+    # update component parameters for each repeat
+    conditionInstructionImage.setImage(conditionInst)
+    # keep track of which components have finished
+    trialInstructionsComponents = [conditionInstructionImage]
+    for thisComponent in trialInstructionsComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "trialInstructions"-------
+    while continueRoutine and routineTimer.getTime() > 0:
+        # get current time
+        t = trialInstructionsClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+
+        # *conditionInstructionImage* updates
+        if t >= 0.0 and conditionInstructionImage.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            conditionInstructionImage.tStart = t
+            conditionInstructionImage.frameNStart = frameN  # exact frame index
+            conditionInstructionImage.setAutoDraw(True)
+        frameRemains = 0.0 + 2 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if conditionInstructionImage.status == STARTED and t >= frameRemains:
+            conditionInstructionImage.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in trialInstructionsComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "trialInstructions"-------
+    for thisComponent in trialInstructionsComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+
+    # ------Prepare to start Routine "trialImageRoutine"-------
+    t = 0
+    trialImageRoutineClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    # update component parameters for each repeat
+    trialImage.setImage(picture)
+    probeTest.setSound(showProbe, secs=-1)
+    cue_leftSide.setImage(conditionCue)
+    cue_rightSide.setImage(conditionCue)
+    # keep track of which components have finished
+    trialImageRoutineComponents = [trialImage, probeTest, cue_leftSide, cue_rightSide]
+    for thisComponent in trialImageRoutineComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "trialImageRoutine"-------
+    while continueRoutine:
+        # get current time
+        t = trialImageRoutineClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+
+        # *trialImage* updates
+        if t >= 0.0 and trialImage.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            trialImage.tStart = t
+            trialImage.frameNStart = frameN  # exact frame index
+            trialImage.setAutoDraw(True)
+        frameRemains = 0.0 + 10 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if trialImage.status == STARTED and t >= frameRemains:
+            trialImage.setAutoDraw(False)
+        # start/stop probeTest
+        if t >= probeTime and probeTest.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            probeTest.tStart = t
+            probeTest.frameNStart = frameN  # exact frame index
+            probeTest.play()  # start the sound (it finishes automatically)
+
+
+        # *cue_leftSide* updates
+        if t >= 0.0 and cue_leftSide.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            cue_leftSide.tStart = t
+            cue_leftSide.frameNStart = frameN  # exact frame index
+            cue_leftSide.setAutoDraw(True)
+        frameRemains = 0.0 + 10 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if cue_leftSide.status == STARTED and t >= frameRemains:
+            cue_leftSide.setAutoDraw(False)
+
+        # *cue_rightSide* updates
+        if t >= 0.0 and cue_rightSide.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            cue_rightSide.tStart = t
+            cue_rightSide.frameNStart = frameN  # exact frame index
+            cue_rightSide.setAutoDraw(True)
+        frameRemains = 0.0 + 10 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if cue_rightSide.status == STARTED and t >= frameRemains:
+            cue_rightSide.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in trialImageRoutineComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "trialImageRoutine"-------
+    for thisComponent in trialImageRoutineComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    probeTest.stop()  # ensure sound has stopped at end of routine
+    # the Routine "trialImageRoutine" was not non-slip safe, so reset the non-slip timer
+    routineTimer.reset()
+
+    # ------Prepare to start Routine "ratingRoutineValence"-------
+    t = 0
+    ratingRoutineValenceClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    routineTimer.add(5.000000)
+    # update component parameters for each repeat
+    valenceRating.reset()
+    # keep track of which components have finished
+    ratingRoutineValenceComponents = [valenceRating, valenceRatingImage, imageValenceText]
+    for thisComponent in ratingRoutineValenceComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "ratingRoutineValence"-------
+    while continueRoutine and routineTimer.getTime() > 0:
+        # get current time
+        t = ratingRoutineValenceClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        # *valenceRating* updates
+        if t >= 0.0 and valenceRating.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            valenceRating.tStart = t
+            valenceRating.frameNStart = frameN  # exact frame index
+            valenceRating.setAutoDraw(True)
+        continueRoutine &= valenceRating.noResponse  # a response ends the trial
+
+        # *valenceRatingImage* updates
+        if t >= 0.0 and valenceRatingImage.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            valenceRatingImage.tStart = t
+            valenceRatingImage.frameNStart = frameN  # exact frame index
+            valenceRatingImage.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if valenceRatingImage.status == STARTED and t >= frameRemains:
+            valenceRatingImage.setAutoDraw(False)
+
+        # *imageValenceText* updates
+        if t >= 0.0 and imageValenceText.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            imageValenceText.tStart = t
+            imageValenceText.frameNStart = frameN  # exact frame index
+            imageValenceText.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if imageValenceText.status == STARTED and t >= frameRemains:
+            imageValenceText.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in ratingRoutineValenceComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "ratingRoutineValence"-------
+    for thisComponent in ratingRoutineValenceComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store data for practiceTrials (TrialHandler)
+    practiceTrials.addData('valenceRating.response', valenceRating.getRating())
+    practiceTrials.addData('valenceRating.rt', valenceRating.getRT())
+    practiceTrials.addData('valenceRating.history', valenceRating.getHistory())
+
+    # ------Prepare to start Routine "ratingRoutineArousal"-------
+    t = 0
+    ratingRoutineArousalClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    routineTimer.add(5.000000)
+    # update component parameters for each repeat
+    arousalRating.reset()
+    # keep track of which components have finished
+    ratingRoutineArousalComponents = [arousalRating, arousalRatingImage, imageArousalText]
+    for thisComponent in ratingRoutineArousalComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "ratingRoutineArousal"-------
+    while continueRoutine and routineTimer.getTime() > 0:
+        # get current time
+        t = ratingRoutineArousalClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+        # *arousalRating* updates
+        if t >= 0.0 and arousalRating.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            arousalRating.tStart = t
+            arousalRating.frameNStart = frameN  # exact frame index
+            arousalRating.setAutoDraw(True)
+        continueRoutine &= arousalRating.noResponse  # a response ends the trial
+
+        # *arousalRatingImage* updates
+        if t >= 0.0 and arousalRatingImage.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            arousalRatingImage.tStart = t
+            arousalRatingImage.frameNStart = frameN  # exact frame index
+            arousalRatingImage.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if arousalRatingImage.status == STARTED and t >= frameRemains:
+            arousalRatingImage.setAutoDraw(False)
+
+        # *imageArousalText* updates
+        if t >= 0.0 and imageArousalText.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            imageArousalText.tStart = t
+            imageArousalText.frameNStart = frameN  # exact frame index
+            imageArousalText.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if imageArousalText.status == STARTED and t >= frameRemains:
+            imageArousalText.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in ratingRoutineArousalComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "ratingRoutineArousal"-------
+    for thisComponent in ratingRoutineArousalComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+    # store data for practiceTrials (TrialHandler)
+    practiceTrials.addData('arousalRating.response', arousalRating.getRating())
+    practiceTrials.addData('arousalRating.rt', arousalRating.getRT())
+    practiceTrials.addData('arousalRating.history', arousalRating.getHistory())
+    thisExp.nextEntry()
+
+# completed 1 repeats of 'practiceTrials'
+
+
 # ------Prepare to start Routine "instructionsHabituationRoutine"-------
 t = 0
 instructionsHabituationRoutineClock.reset()  # clock
@@ -527,16 +1006,16 @@ t = 0
 getPreparedForHabituationClock.reset()  # clock
 frameN = -1
 continueRoutine = True
+routineTimer.add(2.000000)
 # update component parameters for each repeat
-key_resp_4 = event.BuilderKeyResponse()
 # keep track of which components have finished
-getPreparedForHabituationComponents = [imagePrepareForHab, key_resp_4]
+getPreparedForHabituationComponents = [imagePrepareForHab]
 for thisComponent in getPreparedForHabituationComponents:
     if hasattr(thisComponent, 'status'):
         thisComponent.status = NOT_STARTED
 
 # -------Start Routine "getPreparedForHabituation"-------
-while continueRoutine:
+while continueRoutine and routineTimer.getTime() > 0:
     # get current time
     t = getPreparedForHabituationClock.getTime()
     frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
@@ -548,27 +1027,9 @@ while continueRoutine:
         imagePrepareForHab.tStart = t
         imagePrepareForHab.frameNStart = frameN  # exact frame index
         imagePrepareForHab.setAutoDraw(True)
-
-    # *key_resp_4* updates
-    if t >= 0.0 and key_resp_4.status == NOT_STARTED:
-        # keep track of start time/frame for later
-        key_resp_4.tStart = t
-        key_resp_4.frameNStart = frameN  # exact frame index
-        key_resp_4.status = STARTED
-        # keyboard checking is just starting
-        win.callOnFlip(key_resp_4.clock.reset)  # t=0 on next screen flip
-        event.clearEvents(eventType='keyboard')
-    if key_resp_4.status == STARTED:
-        theseKeys = event.getKeys(keyList=['space'])
-
-        # check for quit:
-        if "escape" in theseKeys:
-            endExpNow = True
-        if len(theseKeys) > 0:  # at least one key was pressed
-            key_resp_4.keys = theseKeys[-1]  # just the last key pressed
-            key_resp_4.rt = key_resp_4.clock.getTime()
-            # a response ends the routine
-            continueRoutine = False
+    frameRemains = 0.0 + 2 - win.monitorFramePeriod * 0.75  # most of one frame period left
+    if imagePrepareForHab.status == STARTED and t >= frameRemains:
+        imagePrepareForHab.setAutoDraw(False)
 
     # check if all components have finished
     if not continueRoutine:  # a component has requested a forced-end of Routine
@@ -591,15 +1052,6 @@ while continueRoutine:
 for thisComponent in getPreparedForHabituationComponents:
     if hasattr(thisComponent, "setAutoDraw"):
         thisComponent.setAutoDraw(False)
-# check responses
-if key_resp_4.keys in ['', [], None]:  # No response was made
-    key_resp_4.keys = None
-thisExp.addData('key_resp_4.keys', key_resp_4.keys)
-if key_resp_4.keys != None:  # we had a response
-    thisExp.addData('key_resp_4.rt', key_resp_4.rt)
-thisExp.nextEntry()
-# the Routine "getPreparedForHabituation" was not non-slip safe, so reset the non-slip timer
-routineTimer.reset()
 
 # set up handler to look after randomisation of conditions etc
 habituationLoop = data.TrialHandler(nReps=10, method='random',
@@ -737,12 +1189,11 @@ for thisComponent in taskStartsSoonRoutineComponents:
         thisComponent.setAutoDraw(False)
 
 # set up handler to look after randomisation of conditions etc
-
 trialsList = "";
 if expInfo['order'] == '1':
-    trialsList = u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\trials1.xlsx'
+    trialsList = u'trials1.xlsx'
 else:
-    trialsList = u'C:\\Users\\NOA\\Shira_Army\\startle\\newVersion\\trials2.xlsx'
+    trialsList = u'trials2.xlsx'
 
 # set up handler to look after randomisation of conditions etc
 trialsLoop = data.TrialHandler(nReps=1, method='sequential',
@@ -817,6 +1268,59 @@ for thisTrialsLoop in trialsLoop:
     # the Routine "testFixation" was not non-slip safe, so reset the non-slip timer
     routineTimer.reset()
 
+    # ------Prepare to start Routine "trialInstructions"-------
+    t = 0
+    trialInstructionsClock.reset()  # clock
+    frameN = -1
+    continueRoutine = True
+    routineTimer.add(2.000000)
+    # update component parameters for each repeat
+    conditionInstructionImage.setImage(conditionInst)
+    # keep track of which components have finished
+    trialInstructionsComponents = [conditionInstructionImage]
+    for thisComponent in trialInstructionsComponents:
+        if hasattr(thisComponent, 'status'):
+            thisComponent.status = NOT_STARTED
+
+    # -------Start Routine "trialInstructions"-------
+    while continueRoutine and routineTimer.getTime() > 0:
+        # get current time
+        t = trialInstructionsClock.getTime()
+        frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+        # update/draw components on each frame
+
+        # *conditionInstructionImage* updates
+        if t >= 0.0 and conditionInstructionImage.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            conditionInstructionImage.tStart = t
+            conditionInstructionImage.frameNStart = frameN  # exact frame index
+            conditionInstructionImage.setAutoDraw(True)
+        frameRemains = 0.0 + 2 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if conditionInstructionImage.status == STARTED and t >= frameRemains:
+            conditionInstructionImage.setAutoDraw(False)
+
+        # check if all components have finished
+        if not continueRoutine:  # a component has requested a forced-end of Routine
+            break
+        continueRoutine = False  # will revert to True if at least one component still running
+        for thisComponent in trialInstructionsComponents:
+            if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+                continueRoutine = True
+                break  # at least one component has not yet finished
+
+        # check for quit (the Esc key)
+        if endExpNow or event.getKeys(keyList=["escape"]):
+            core.quit()
+
+        # refresh the screen
+        if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+            win.flip()
+
+    # -------Ending Routine "trialInstructions"-------
+    for thisComponent in trialInstructionsComponents:
+        if hasattr(thisComponent, "setAutoDraw"):
+            thisComponent.setAutoDraw(False)
+
     # ------Prepare to start Routine "trialImageRoutine"-------
     t = 0
     trialImageRoutineClock.reset()  # clock
@@ -855,6 +1359,9 @@ for thisTrialsLoop in trialsLoop:
             probeTest.tStart = t
             probeTest.frameNStart = frameN  # exact frame index
             probeTest.play()  # start the sound (it finishes automatically)
+            time=datetime.now();
+            trialsLoop.addData('probeTimeSeconds', time);
+            trialsLoop.addData('probeTimeMicroSeconds', time.microsecond);
 
         # *cue_leftSide* updates
         if t >= 0.0 and cue_leftSide.status == NOT_STARTED:
@@ -902,9 +1409,9 @@ for thisTrialsLoop in trialsLoop:
     routineTimer.reset()
 
     # ------Prepare to start Routine "ratingRoutineValence"-------
+
     if expInfo['withRating'] == 'no':
         continue;
-
     t = 0
     ratingRoutineValenceClock.reset()  # clock
     frameN = -1
@@ -913,7 +1420,7 @@ for thisTrialsLoop in trialsLoop:
     # update component parameters for each repeat
     valenceRating.reset()
     # keep track of which components have finished
-    ratingRoutineValenceComponents = [valenceRating, valenceRatingImage]
+    ratingRoutineValenceComponents = [valenceRating, valenceRatingImage, imageValenceText]
     for thisComponent in ratingRoutineValenceComponents:
         if hasattr(thisComponent, 'status'):
             thisComponent.status = NOT_STARTED
@@ -942,6 +1449,16 @@ for thisTrialsLoop in trialsLoop:
         if valenceRatingImage.status == STARTED and t >= frameRemains:
             valenceRatingImage.setAutoDraw(False)
 
+        # *imageValenceText* updates
+        if t >= 0.0 and imageValenceText.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            imageValenceText.tStart = t
+            imageValenceText.frameNStart = frameN  # exact frame index
+            imageValenceText.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if imageValenceText.status == STARTED and t >= frameRemains:
+            imageValenceText.setAutoDraw(False)
+
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
             break
@@ -964,12 +1481,10 @@ for thisTrialsLoop in trialsLoop:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # store data for trialsLoop (TrialHandler)
-
-
     rate = valenceRating.getHistory()[len(valenceRating.getHistory()) - 1][0]
     rt = valenceRating.getHistory()[len(valenceRating.getHistory()) - 1][1]
-    trialsLoop.addData('valenceRating.response', rate)
-    trialsLoop.addData('valenceRating.rt',rt)
+    trialsLoop.addData('valenceRating.response', valenceRating.getRating())
+    trialsLoop.addData('valenceRating.rt', valenceRating.getRT())
     trialsLoop.addData('valenceRating.history', valenceRating.getHistory())
 
     # ------Prepare to start Routine "ratingRoutineArousal"-------
@@ -981,7 +1496,7 @@ for thisTrialsLoop in trialsLoop:
     # update component parameters for each repeat
     arousalRating.reset()
     # keep track of which components have finished
-    ratingRoutineArousalComponents = [arousalRating, arousalRatingImage]
+    ratingRoutineArousalComponents = [arousalRating, arousalRatingImage, imageArousalText]
     for thisComponent in ratingRoutineArousalComponents:
         if hasattr(thisComponent, 'status'):
             thisComponent.status = NOT_STARTED
@@ -1010,6 +1525,16 @@ for thisTrialsLoop in trialsLoop:
         if arousalRatingImage.status == STARTED and t >= frameRemains:
             arousalRatingImage.setAutoDraw(False)
 
+        # *imageArousalText* updates
+        if t >= 0.0 and imageArousalText.status == NOT_STARTED:
+            # keep track of start time/frame for later
+            imageArousalText.tStart = t
+            imageArousalText.frameNStart = frameN  # exact frame index
+            imageArousalText.setAutoDraw(True)
+        frameRemains = 0.0 + 5 - win.monitorFramePeriod * 0.75  # most of one frame period left
+        if imageArousalText.status == STARTED and t >= frameRemains:
+            imageArousalText.setAutoDraw(False)
+
         # check if all components have finished
         if not continueRoutine:  # a component has requested a forced-end of Routine
             break
@@ -1032,17 +1557,94 @@ for thisTrialsLoop in trialsLoop:
         if hasattr(thisComponent, "setAutoDraw"):
             thisComponent.setAutoDraw(False)
     # store data for trialsLoop (TrialHandler)
-
     rate = arousalRating.getHistory()[len(arousalRating.getHistory()) - 1][0]
     rt = arousalRating.getHistory()[len(arousalRating.getHistory()) - 1][1]
-    trialsLoop.addData('arousalRating.response', rate)
-    trialsLoop.addData('arousalRating.rt', rt)
+    trialsLoop.addData('arousalRating.response', arousalRating.getRating())
+    trialsLoop.addData('arousalRating.rt', arousalRating.getRT())
     trialsLoop.addData('arousalRating.history', arousalRating.getHistory())
-
     thisExp.nextEntry()
 
 # completed 1 repeats of 'trialsLoop'
 
+
+# ------Prepare to start Routine "endExp"-------
+t = 0
+endExpClock.reset()  # clock
+frameN = -1
+continueRoutine = True
+# update component parameters for each repeat
+key_resp_4 = event.BuilderKeyResponse()
+# keep track of which components have finished
+endExpComponents = [endImage, key_resp_4]
+for thisComponent in endExpComponents:
+    if hasattr(thisComponent, 'status'):
+        thisComponent.status = NOT_STARTED
+
+# -------Start Routine "endExp"-------
+while continueRoutine:
+    # get current time
+    t = endExpClock.getTime()
+    frameN = frameN + 1  # number of completed frames (so 0 is the first frame)
+    # update/draw components on each frame
+
+    # *endImage* updates
+    if t >= 0.0 and endImage.status == NOT_STARTED:
+        # keep track of start time/frame for later
+        endImage.tStart = t
+        endImage.frameNStart = frameN  # exact frame index
+        endImage.setAutoDraw(True)
+
+    # *key_resp_4* updates
+    if t >= 0.0 and key_resp_4.status == NOT_STARTED:
+        # keep track of start time/frame for later
+        key_resp_4.tStart = t
+        key_resp_4.frameNStart = frameN  # exact frame index
+        key_resp_4.status = STARTED
+        # keyboard checking is just starting
+        win.callOnFlip(key_resp_4.clock.reset)  # t=0 on next screen flip
+        event.clearEvents(eventType='keyboard')
+    if key_resp_4.status == STARTED:
+        theseKeys = event.getKeys(keyList=['space'])
+
+        # check for quit:
+        if "escape" in theseKeys:
+            endExpNow = True
+        if len(theseKeys) > 0:  # at least one key was pressed
+            key_resp_4.keys = theseKeys[-1]  # just the last key pressed
+            key_resp_4.rt = key_resp_4.clock.getTime()
+            # a response ends the routine
+            continueRoutine = False
+
+    # check if all components have finished
+    if not continueRoutine:  # a component has requested a forced-end of Routine
+        break
+    continueRoutine = False  # will revert to True if at least one component still running
+    for thisComponent in endExpComponents:
+        if hasattr(thisComponent, "status") and thisComponent.status != FINISHED:
+            continueRoutine = True
+            break  # at least one component has not yet finished
+
+    # check for quit (the Esc key)
+    if endExpNow or event.getKeys(keyList=["escape"]):
+        core.quit()
+
+    # refresh the screen
+    if continueRoutine:  # don't flip if this routine is over or we'll get a blank screen
+        win.flip()
+
+# -------Ending Routine "endExp"-------
+for thisComponent in endExpComponents:
+    if hasattr(thisComponent, "setAutoDraw"):
+        thisComponent.setAutoDraw(False)
+# check responses
+if key_resp_4.keys in ['', [], None]:  # No response was made
+    key_resp_4.keys = None
+thisExp.addData('key_resp_4.keys', key_resp_4.keys)
+if key_resp_4.keys != None:  # we had a response
+    thisExp.addData('key_resp_4.rt', key_resp_4.rt)
+thisExp.nextEntry()
+# the Routine "endExp" was not non-slip safe, so reset the non-slip timer
+routineTimer.reset()
 # these shouldn't be strictly necessary (should auto-save)
 thisExp.saveAsWideText(filename + '.csv')
 thisExp.saveAsPickle(filename)
