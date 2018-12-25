@@ -3,7 +3,7 @@
 !.gitignore
 !*.py
 !*.psyexp
-
+!*.txt
 # ...even if they are in subdirectories
 !*/
 
