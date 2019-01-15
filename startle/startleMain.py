@@ -21,6 +21,9 @@ from numpy.random import random, randint, normal, shuffle
 import os  # handy system and path functions
 import sys  # to get file system encoding
 from datetime import datetime
+import win32com.client
+
+shell =  win32com.client.Dispatch("WScript.Shell")
 # Ensure that relative paths start from the same directory as this script
 _thisDir = os.path.dirname(os.path.abspath(__file__)).decode(sys.getfilesystemencoding())
 os.chdir(_thisDir)
@@ -38,6 +41,8 @@ expInfo['expName'] = expName
 filename = _thisDir + os.sep + u'data/%s_%s_%s_%s_%s' % (expInfo['participant'], expName, expInfo['date'],expInfo['order'],
                                                          expInfo['withRating'])
 trialsLoop = "";
+
+
 
 # An ExperimentHandler isn't essential but helps with data saving
 thisExp = data.ExperimentHandler(name=expName, version='',
@@ -1358,7 +1363,10 @@ for thisTrialsLoop in trialsLoop:
             # keep track of start time/frame for later
             probeTest.tStart = t
             probeTest.frameNStart = frameN  # exact frame index
+
             probeTest.play()  # start the sound (it finishes automatically)
+            if 'empty' not in showProbe:
+                shell.SendKeys("1");
             time=datetime.now();
             trialsLoop.addData('probeTimeSeconds', time);
             trialsLoop.addData('probeTimeMicroSeconds', time.microsecond);
@@ -1411,6 +1419,7 @@ for thisTrialsLoop in trialsLoop:
     # ------Prepare to start Routine "ratingRoutineValence"-------
 
     if expInfo['withRating'] == 'no':
+        thisExp.nextEntry()
         continue;
     t = 0
     ratingRoutineValenceClock.reset()  # clock

@@ -62,6 +62,7 @@ trialsLoop = data.TrialHandler(nReps=1, method='sequential',
 paste below:
 
     if expInfo['withRating'] == 'no':
+        thisExp.nextEntry()
         continue;
 		
 5.  c c c 
@@ -79,12 +80,18 @@ paste below:
     trialsLoop.addData('valenceRating.history', valenceRating.getHistory())
 					
 
+
 7. look for the last appearance of: probeTest.play() 
 
 paste below:
+if 'empty' not in showProbe:
+    shell.SendKeys("1");
 time=datetime.now();
 trialsLoop.addData('probeTimeSeconds', time);
 trialsLoop.addData('probeTimeMicroSeconds', time.microsecond);	
 
 8. add to imports:
-from datetime import datetime	
+from datetime import datetime
+import win32com.client
+
+shell =  win32com.client.Dispatch("WScript.Shell")
